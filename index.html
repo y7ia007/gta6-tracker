@@ -30,8 +30,9 @@ h1,h2,.display{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacin
 .glass{background:var(--glass);border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}
 .glow{box-shadow:0 0 0 1px rgba(255,46,136,.25),0 10px 40px -10px rgba(255,46,136,.55)}
 /* hero */
-.hero{position:relative;height:300px;overflow:hidden;padding-top:env(safe-area-inset-top)}
-.hero svg{position:absolute;inset:0;width:100%;height:100%}
+.hero{position:relative;height:440px;overflow:hidden}
+.hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:76% 20%}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,6,20,.35) 0%,rgba(11,6,20,0) 30%,rgba(11,6,20,.2) 60%,#0b0614 100%)}
 .hero .txt{position:absolute;left:18px;right:18px;bottom:22px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
 .hero h1{font-size:44px;text-shadow:0 0 24px rgba(255,46,136,.7)}
 .hero p{margin:4px 0 0;color:#ffe3f0;font-size:14px}
@@ -77,6 +78,12 @@ input[type=search]:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,
 .imgs img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:rgba(255,255,255,.06);display:block}
 .viewer{position:fixed;inset:0;background:rgba(5,2,10,.94);display:none;place-items:center;z-index:20;padding:20px}
 .viewer.on{display:grid}.viewer img{max-width:100%;max-height:100%;border-radius:12px}
+.banner{position:relative;height:220px;margin-bottom:-90px}
+.banner img{width:100%;height:100%;object-fit:cover;display:block}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,6,20,.1),#0b0614 95%)}
+.banner+.top{background:linear-gradient(180deg,rgba(11,6,20,0),rgba(11,6,20,.92) 40%)}
+.cat .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;z-index:-1}
+.cat{isolation:isolate}
 /* tab bar */
 .tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10;display:grid;grid-template-columns:repeat(4,1fr);padding:8px;border-radius:24px}
 .tabs a{display:grid;justify-items:center;gap:2px;color:var(--mute);text-decoration:none;font-size:11px;padding:6px 0;border-radius:16px}
@@ -115,7 +122,7 @@ const I={
  star:'<path d="M12 3l2.7 5.6 6.3.9-4.5 4.4 1 6.1L12 17l-5.5 3 1-6.1L3 9.5l6.3-.9z"/>'};
 const ico=(n,c='i')=>`<svg class="${c}" viewBox="0 0 24 24">${I[n]}</svg>`;
 const CATS=[
- {id:'garages',name:'Garages',icon:'garage',total:13,live:true},
+ {id:'garages',name:'Garages',icon:'garage',total:13,live:true,img:'img/garages.jpg'},
  {id:'vehicles',name:'Vehicles',icon:'car',total:557},
  {id:'weapons',name:'Weapons',icon:'gun',total:196},
  {id:'animals',name:'Animals',icon:'paw',total:255},
@@ -128,16 +135,7 @@ const app=document.getElementById('app');
 const doneIn=list=>list.filter(i=>done[i.id]).length;
 function hero(pct){
  const C=2*Math.PI*40;
- return `<div class="hero"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
- <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0b3d"/><stop offset=".45" stop-color="#9b1f6b"/><stop offset=".75" stop-color="#ff5a5f"/><stop offset="1" stop-color="#ffb36b"/></linearGradient>
- <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe28a"/><stop offset="1" stop-color="#ff2e88"/></linearGradient>
- <clipPath id="sc"><circle cx="270" cy="200" r="78"/></clipPath><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#0b0614" stop-opacity="0"/><stop offset="1" stop-color="#0b0614"/></linearGradient></defs>
- <rect width="400" height="300" fill="url(#sky)"/>
- <g class="sun" clip-path="url(#sc)"><rect x="180" y="110" width="180" height="180" fill="url(#sun)"/>${[0,1,2,3,4,5].map(k=>`<rect x="180" y="${200+k*13}" width="180" height="${3+k*1.2}" fill="#9b1f6b"/>`).join('')}</g>
- <path d="M0 250 L20 250 20 215 34 215 34 230 52 230 52 190 66 190 66 230 90 230 90 205 104 205 104 238 140 238 140 222 160 222 160 250 400 250 400 300 0 300Z" fill="#1a0a24" opacity=".9"/>
- <path d="M300 300 Q318 220 322 170" stroke="#12061c" stroke-width="5" fill="none"/><path d="M322 170 q-30 -6 -48 10 M322 170 q-16 -22 -40 -22 M322 170 q12 -26 36 -26 M322 170 q30 -2 44 18 M322 170 q-2 -26 8 -40" stroke="#12061c" stroke-width="6" fill="none" stroke-linecap="round"/>
- <path d="M362 300 Q372 240 370 205" stroke="#12061c" stroke-width="4" fill="none"/><path d="M370 205 q-24 -4 -36 8 M370 205 q-10 -18 -28 -18 M370 205 q10 -20 28 -20 M370 205 q22 0 32 14" stroke="#12061c" stroke-width="5" fill="none" stroke-linecap="round"/>
- <rect width="400" height="300" fill="url(#fade)"/></svg>
+ return `<div class="hero"><img class="bg" src="img/hero.jpg" alt=""><div class="shade"></div>
  <div class="txt"><div><h1>LEONIDA<br>LOG</h1><p>Your road to 100%</p></div>
  <div class="ring"><svg viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" stroke="rgba(255,255,255,.15)" stroke-width="8" fill="none"/>
  <circle cx="48" cy="48" r="40" stroke="url(#rg)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}"/>
@@ -153,12 +151,12 @@ function home(){
  <a class="cat story glass" href="#story"><div class="ic">${ico('book')}</div><div><h3>Chapter 1</h3><small>Spoiler-safe · next mission only</small></div><span class="lock">Soon</span></a>
  <div class="sec"><h2>PROGRESS DATABASE</h2><span>~3,000 items</span></div>
  <div class="grid">${CATS.map(c=>{const n=c.live?doneIn(items):0;return `<a class="cat glass ${c.live?'live':''}" href="${c.live?'#'+c.id:'#home'}">
- ${c.live?'':'<span class="lock">Soon</span>'}<div class="ic">${ico(c.icon)}</div><div><h3>${c.name}</h3><small>${n} / ${c.total}</small></div>
+ ${c.img?`<img class="bgimg" src="${c.img}" alt="">`:''}${c.live?'':'<span class="lock">Soon</span>'}<div class="ic">${ico(c.icon)}</div><div><h3>${c.name}</h3><small>${n} / ${c.total}</small></div>
  <div class="mini"><i style="width:${n/c.total*100}%"></i></div></a>`}).join('')}</div></div>`;
 }
 function list(){
  const n=doneIn(items);
- app.innerHTML=`<div class="top"><a class="back" href="#home">‹ Home</a><h1>GARAGES</h1>
+ app.innerHTML=`<div class="banner"><img src="img/garages.jpg" alt=""></div><div class="top"><a class="back" href="#home">‹ Home</a><h1>GARAGES</h1>
  <div class="bar"><i style="width:${n/items.length*100}%"></i></div>
  <div class="row"><span>${n} of ${items.length} owned</span></div>
  <div class="chips">${['all','todo','done'].map(f=>`<button class="chip ${filter===f?'on':''}" data-f="${f}">${f==='all'?'All':f==='todo'?'To do':'Done'}</button>`).join('')}</div>
