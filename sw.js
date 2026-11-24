@@ -1,5 +1,5 @@
-const APP='gta6-app-v3',IMG='gta6-img';
-const FILES=['./','index.html','data.json','manifest.json','icon.svg','img/hero.jpg','img/garages.jpg'];
+const APP='gta6-app-v4',IMG='gta6-img';
+const FILES=['./','index.html','data.json','data/missions.json','manifest.json','icon.svg','img/hero.jpg','img/garages.jpg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(APP).then(c=>c.addAll(FILES)));self.skipWaiting()});
 self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch',e=>{

@@ -84,6 +84,28 @@ input[type=search]:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,
 .banner+.top{background:linear-gradient(180deg,rgba(11,6,20,0),rgba(11,6,20,.92) 40%)}
 .cat .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;z-index:-1}
 .cat{isolation:isolate}
+
+/* story */
+.chap{padding:16px;margin-bottom:12px}
+.chap h3{margin:0;font:22px Anton,sans-serif;letter-spacing:.01em}
+.chap .sub{color:var(--mute);font-size:13px}
+.chap.locked{opacity:.6}
+.mrow{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.mrow:first-of-type{border-top:0}
+.mrow .num{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:13px;font-weight:800;background:rgba(255,255,255,.07)}
+.mrow.done .num{background:var(--teal);color:#062b28}
+.mrow.cur .num{background:var(--grad);color:#1a0710;box-shadow:0 0 16px var(--pink)}
+.mrow.lock{color:var(--mute)}
+.mrow .t{flex:1}.mrow .t b{display:block;font-size:15px}.mrow .t small{color:var(--mute);font-size:12px}
+.opt{font-size:11px;color:var(--gold);border:1px solid rgba(255,196,107,.35);border-radius:20px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+.miss{font-size:11px;color:#ff8a8a;border:1px solid rgba(255,120,120,.4);border-radius:20px;padding:1px 7px;margin-left:6px}
+.detail{padding:0 18px 30px;max-width:720px;margin:0 auto;display:grid;gap:14px}
+.box{padding:16px}.box h4{margin:0 0 8px;font-size:13px;color:var(--gold);font-weight:600;text-transform:none}
+.box ol,.box ul{margin:0;padding-left:20px;display:grid;gap:8px}
+.reveal{width:100%}
+.donebtn{display:flex;gap:10px;align-items:center;justify-content:center;width:100%;font:700 16px Inter,sans-serif;padding:15px;border-radius:16px;border:0;background:var(--grad);color:#1a0710;box-shadow:0 10px 30px -10px var(--pink)}
+.donebtn.is{background:var(--teal);box-shadow:0 0 20px rgba(45,226,214,.5);color:#062b28}
+.ghost{width:100%;font:600 15px Inter,sans-serif;padding:13px;border-radius:16px;border:1px solid var(--line);background:var(--glass);color:var(--ink)}
 /* tab bar */
 .tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10;display:grid;grid-template-columns:repeat(4,1fr);padding:8px;border-radius:24px}
 .tabs a{display:grid;justify-items:center;gap:2px;color:var(--mute);text-decoration:none;font-size:11px;padding:6px 0;border-radius:16px}
@@ -142,13 +164,13 @@ function hero(pct){
  <defs><linearGradient id="rg"><stop offset="0" stop-color="#ff2e88"/><stop offset="1" stop-color="#ffc46b"/></linearGradient></defs></svg><b>${pct}%</b></div></div></div>`;
 }
 function home(){
- const total=CATS.reduce((s,c)=>s+c.total,0)+91;
- const pct=Math.round(doneIn(items)/total*1000)/10;
+ const mains=allM().filter(m=>!m.optional);const total=CATS.reduce((s,c)=>s+c.total,0)+mains.length;
+ const pct=Math.round((doneIn(items)+mains.filter(m=>done[m.id]).length)/total*1000)/10;
  const g=items.length?doneIn(items):0;
  app.innerHTML=hero(pct)+`<div class="wrap">
- <div class="tip glass glow"><div class="ic">${ico('bulb')}</div><div><b>Next up</b><p>${g<items.length?`You own ${g} of ${items.length} garages. Mitchell Auto Center is the cheapest at $4,000.`:'All garages done. Nice work.'}</p></div></div>
- <div class="sec"><h2>STORY</h2><span>5 chapters · 91 missions</span></div>
- <a class="cat story glass" href="#story"><div class="ic">${ico('book')}</div><div><h3>Chapter 1</h3><small>Spoiler-safe · next mission only</small></div><span class="lock">Soon</span></a>
+ <div class="tip glass glow"><div class="ic">${ico('bulb')}</div><div><b>Tip</b><p>${(()=>{const c=currentMission();const t=c&&c.m.guide&&c.m.guide.tips&&c.m.guide.tips[0];return t?esc(t):g<items.length?`You own ${g} of ${items.length} garages. Mitchell Auto Center is the cheapest at $4,000.`:'All garages done. Nice work.'})()}</p></div></div>
+ <div class="sec"><h2>STORY</h2><span>Continue</span></div>
+ ${(()=>{const c=currentMission();return `<a class="cat story glass glow" href="${c?'#m/'+encodeURIComponent(c.m.id):'#story'}"><div class="ic" style="background:var(--grad);border:0">${ico('book')}</div><div><h3>${c?esc(c.m.name):'Story complete'}</h3><small>${c?esc(c.c.name)+' · current mission':'All chapters done'}</small></div><span style="color:var(--mute)">›</span></a>`})()}
  <div class="sec"><h2>PROGRESS DATABASE</h2><span>~3,000 items</span></div>
  <div class="grid">${CATS.map(c=>{const n=c.live?doneIn(items):0;return `<a class="cat glass ${c.live?'live':''}" href="${c.live?'#'+c.id:'#home'}">
  ${c.img?`<img class="bgimg" src="${c.img}" alt="">`:''}${c.live?'':'<span class="lock">Soon</span>'}<div class="ic">${ico(c.icon)}</div><div><h3>${c.name}</h3><small>${n} / ${c.total}</small></div>
@@ -179,10 +201,50 @@ function settings(){
   for(const u of urls){try{const r=await fetch(u,{mode:'no-cors'});await c.put(u,r);ok++}catch(e){}st.textContent=`Saved ${ok} / ${urls.length}`}};
 }
 function soon(t){app.innerHTML=`<div class="top"><a class="back" href="#home">‹ Home</a><h1>${t}</h1></div><div class="wrap"><div class="tip glass"><div class="ic">${ico('star')}</div><div><b>Coming next</b><p>This section is being built.</p></div></div></div>`}
+
+let CH=[];
+const allM=()=>CH.flatMap(c=>c.missions);
+function chState(){ // returns per chapter: unlocked, current mission index
+ let prevDone=true;return CH.map(c=>{const main=c.missions.filter(m=>!m.optional);const unlocked=prevDone;
+  const cur=c.missions.findIndex(m=>!m.optional&&!done[m.id]);prevDone=unlocked&&main.every(m=>done[m.id]);return {unlocked,cur,complete:prevDone}});
+}
+function currentMission(){const st=chState();for(let i=0;i<CH.length;i++){if(st[i].unlocked&&st[i].cur>=0)return {c:CH[i],m:CH[i].missions[st[i].cur]}}return null}
+function story(){
+ const st=chState();const total=allM().filter(m=>!m.optional).length,dn=allM().filter(m=>!m.optional&&done[m.id]).length;
+ app.innerHTML=`<div class="top"><h1>STORY</h1><div class="bar"><i style="width:${dn/total*100}%"></i></div><div class="row"><span>${dn} of ${total} main missions</span><span>Spoiler-safe</span></div></div><div class="wrap">`+
+ CH.map((c,i)=>{const s=st[i];
+  if(!s.unlocked)return `<div class="chap glass locked"><h3>${esc(c.name.toUpperCase())}</h3><div class="sub">Locked · finish the previous chapter</div></div>`;
+  const rows=c.missions.map((m,j)=>{
+   const vis=done[m.id]||j<=s.cur||s.cur<0;
+   if(!vis)return m.optional?'':`<div class="mrow lock"><span class="num">${j+1}</span><div class="t"><b>Locked</b><small>Finish the current mission first</small></div></div>`;
+   const cls=done[m.id]?'done':j===s.cur?'cur':'';
+   return `<a class="mrow ${cls}" href="#m/${encodeURIComponent(m.id)}"><span class="num">${done[m.id]?'✓':j+1}</span><div class="t"><b>${esc(m.name)}${m.optional?'<span class="opt">Optional</span>':''}${m.tag&&/issable/.test(m.tag)?'<span class="miss">Missable</span>':''}</b><small>${j===s.cur?'Current mission':m.tag?esc(m.tag):done[m.id]?'Completed':'Available'}</small></div><span style="color:var(--mute)">›</span></a>`}).join('');
+  const dn=c.missions.filter(m=>done[m.id]).length;
+  return `<div class="chap glass ${s.cur>=0?'glow':''}"><h3>${esc(c.name.toUpperCase())}</h3><div class="sub">${dn} / ${c.missions.length} done${c.title?' · '+esc(c.title):''}</div>${rows}</div>`}).join('')+`</div>`;
+}
+function mission(id){
+ const m=allM().find(x=>x.id===id);if(!m){story();return}
+ const g=m.guide;
+ app.innerHTML=`<div class="top"><a class="back" href="#story">‹ Story</a><h1 style="font-size:32px">${esc(m.name.toUpperCase())}</h1>
+ <div style="margin-top:6px">${m.optional?'<span class="opt" style="margin:0">Optional</span> ':''}${m.tag?`<span class="tag">${esc(m.tag)}</span>`:''}</div></div>
+ <div class="detail">
+ <button class="donebtn ${done[m.id]?'is':''}" id="mdone">${done[m.id]?'✓ Completed':'Mark as completed'}</button>
+ ${g?`<div class="box glass"><h4>Where it starts</h4><div>${esc(g.giver)}</div></div>
+ ${g.tips&&g.tips.length?`<div class="box glass glow"><h4>Before you start</h4><ul>${g.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:''}
+ <button class="ghost" id="rev">Show step-by-step walkthrough</button>
+ <div id="steps" style="display:none;gap:14px" ><div class="box glass"><h4>Walkthrough</h4><ol>${g.steps.map(t=>`<li>${esc(t)}</li>`).join('')}</ol></div>
+ ${g.imgs&&g.imgs.length?`<div class="imgs">${g.imgs.map(u=>`<img loading="lazy" src="${esc(u)}" data-full="${esc(full(u))}" alt="">`).join('')}</div>`:''}</div>`
+ :`<div class="box glass"><h4>Guide</h4><div class="meta">The step-by-step guide for this mission is being added.</div></div>`}
+ </div>`;
+ document.getElementById('mdone').onclick=()=>{if(done[m.id])delete done[m.id];else done[m.id]=1;save();
+  if(done[m.id]){location.hash='#story'}else mission(id)};
+ const r=document.getElementById('rev');if(r)r.onclick=()=>{document.getElementById('steps').style.display='grid';r.remove()};
+ document.querySelector('.detail').addEventListener('click',e=>{const img=e.target.closest('.imgs img');if(img){document.getElementById('big').src=img.dataset.full;document.getElementById('viewer').classList.add('on')}});
+}
 function go(){
  route=(location.hash||'#home').slice(1);
- document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===route||(route==='garages'&&a.dataset.t==='home')));
- if(route==='garages')list();else if(route==='settings')settings();else if(route==='story')soon('STORY');else if(route==='maps')soon('MAPS');else home();
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===route||(route==='garages'&&a.dataset.t==='home')||(route.startsWith('m/')&&a.dataset.t==='story')));
+ if(route.startsWith('m/'))mission(decodeURIComponent(route.slice(2)));else if(route==='garages')list();else if(route==='settings')settings();else if(route==='story')story();else if(route==='maps')soon('MAPS');else home();
  window.scrollTo(0,0);
 }
 app.addEventListener('click',e=>{
@@ -195,7 +257,7 @@ app.addEventListener('click',e=>{
 });
 document.getElementById('viewer').onclick=e=>e.currentTarget.classList.remove('on');
 addEventListener('hashchange',go);
-fetch('data.json').then(r=>r.json()).then(d=>{items=d;go()}).catch(()=>go());
+Promise.all([fetch('data.json').then(r=>r.json()),fetch('data/missions.json').then(r=>r.json())]).then(([d,m])=>{items=d;CH=m;go()}).catch(()=>go());
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
 }
 </script>
