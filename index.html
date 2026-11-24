@@ -5,86 +5,199 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0d0a14">
+<meta name="apple-mobile-web-app-title" content="Leonida Log">
+<meta name="theme-color" content="#0b0614">
 <link rel="manifest" href="manifest.json">
-<title>GTA VI Tracker – Test</title>
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<title>Leonida Log</title>
 <style>
-:root{--bg:#0d0a14;--card:#1a1424;--ink:#f4eefc;--mute:#a99bbd;--pink:#ff4fa3;--teal:#2ee6c5}
-*{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-header{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,var(--bg) 80%,transparent);padding:16px 16px 12px}
-h1{margin:0 0 4px;font-size:24px}
-.bar{height:8px;border-radius:8px;background:#2a2236;overflow:hidden;margin:8px 0}
-.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--teal));width:0;transition:width .3s}
-.row{display:flex;gap:8px;align-items:center;justify-content:space-between;color:var(--mute);font-size:14px}
-input[type=search]{width:100%;font-size:16px;padding:12px 14px;border-radius:12px;border:0;background:var(--card);color:var(--ink);margin-top:10px}
-button{font:inherit;font-size:14px;border:0;border-radius:10px;padding:10px 12px;background:var(--card);color:var(--ink)}
-main{padding:0 16px 40px;display:grid;gap:12px}
-.item{background:var(--card);border-radius:16px;padding:14px;display:grid;gap:10px}
+/* VOICE: late-night Vice City, premium, glowing
+   IDEA: a sunset over Leonida seen through tinted glass
+   PICTURE: sunset sky with sun stripes, palms, skyline + progress ring
+   COLOUR: night plum ground, hot pink + coral sunset gradient, teal for done
+   TYPE: Anton display, Inter body */
+:root{--bg:#0b0614;--bg2:#160a22;--glass:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--ink:#fbf4ff;--mute:#b9a6cc;
+--pink:#ff2e88;--coral:#ff7a45;--gold:#ffc46b;--teal:#2de2d6;--grad:linear-gradient(100deg,var(--pink),var(--coral) 60%,var(--gold))}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Inter,-apple-system,system-ui,sans-serif}
+body{min-height:100vh;padding-bottom:calc(84px + env(safe-area-inset-bottom));background:
+ radial-gradient(120% 60% at 80% -10%,rgba(255,46,136,.25),transparent 60%),
+ radial-gradient(90% 50% at 0% 30%,rgba(255,122,69,.12),transparent 60%),var(--bg)}
+h1,h2,.display{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.01em;line-height:1.02;margin:0}
+.wrap{padding:0 18px;max-width:720px;margin:0 auto}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}
+.glow{box-shadow:0 0 0 1px rgba(255,46,136,.25),0 10px 40px -10px rgba(255,46,136,.55)}
+/* hero */
+.hero{position:relative;height:300px;overflow:hidden;padding-top:env(safe-area-inset-top)}
+.hero svg{position:absolute;inset:0;width:100%;height:100%}
+.hero .txt{position:absolute;left:18px;right:18px;bottom:22px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+.hero h1{font-size:44px;text-shadow:0 0 24px rgba(255,46,136,.7)}
+.hero p{margin:4px 0 0;color:#ffe3f0;font-size:14px}
+.ring{flex:none;width:96px;height:96px;position:relative}
+.ring svg{position:static;width:96px;height:96px;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:28px Anton,sans-serif}
+/* sections */
+.sec{margin:22px 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+.sec h2{font-size:24px}.sec span{color:var(--mute);font-size:14px}
+.tip{padding:16px;display:flex;gap:12px;align-items:flex-start;margin-top:-6px;position:relative}
+.tip .ic{flex:none;width:40px;height:40px;border-radius:12px;background:var(--grad);display:grid;place-items:center}
+.tip b{display:block;font-size:14px;color:var(--gold)}.tip p{margin:2px 0 0;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cat{padding:16px;display:grid;gap:12px;text-decoration:none;color:inherit;position:relative;overflow:hidden;min-height:150px}
+.cat .ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid var(--line)}
+.cat.live .ic{background:var(--grad);border:0;box-shadow:0 6px 24px -6px var(--pink)}
+.cat h3{margin:0;font-size:16px}.cat small{color:var(--mute);font-size:13px}
+.mini{height:6px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}.mini i{display:block;height:100%;background:var(--grad)}
+.cat .lock{position:absolute;top:14px;right:14px;font-size:11px;color:var(--mute);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
+.cat.story{grid-column:1/-1;min-height:0;grid-template-columns:auto 1fr auto;align-items:center}
+svg.i{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* list page */
+.top{position:sticky;top:0;z-index:5;padding:calc(env(safe-area-inset-top) + 12px) 18px 12px;background:linear-gradient(180deg,rgba(11,6,20,.95) 70%,rgba(11,6,20,0))}
+.back{display:inline-flex;gap:6px;align-items:center;color:var(--mute);text-decoration:none;font-size:15px;padding:6px 0}
+.top h1{font-size:38px;margin-top:4px}
+.bar{height:8px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden;margin:10px 0 6px}.bar i{display:block;height:100%;background:var(--grad);box-shadow:0 0 12px var(--pink);transition:width .4s}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--mute);font-size:14px}
+.chips{display:flex;gap:8px;margin-top:10px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--glass);color:var(--ink);border-radius:20px;padding:8px 14px}
+.chip.on{background:var(--grad);border-color:transparent;color:#1a0710;font-weight:600}
+input[type=search]{width:100%;font:16px Inter,sans-serif;padding:13px 16px;border-radius:16px;border:1px solid var(--line);background:var(--glass);color:var(--ink);margin-top:10px;outline:none}
+input[type=search]:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,46,136,.25)}
+.list{display:grid;gap:14px;padding:6px 18px 30px;max-width:720px;margin:0 auto}
+.item{padding:14px;display:grid;gap:12px;transition:opacity .25s}
 .item.done{opacity:.55}
-.top{display:flex;gap:12px;align-items:flex-start}
-.check{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--mute);display:grid;place-items:center;font-size:18px;color:var(--bg)}
-.done .check{background:var(--teal);border-color:var(--teal)}
-.name{font-weight:700}
-.meta{color:var(--mute);font-size:14px}
+.ihead{display:flex;gap:12px;align-items:flex-start}
+.check{flex:none;width:32px;height:32px;border-radius:10px;border:2px solid rgba(255,255,255,.35);display:grid;place-items:center;transition:.2s}
+.done .check{background:var(--teal);border-color:var(--teal);box-shadow:0 0 16px var(--teal)}
+.check svg{width:18px;height:18px;stroke:#062b28;stroke-width:3;fill:none;opacity:0}.done .check svg{opacity:1}
+.name{font-weight:800}.meta{color:var(--mute);font-size:14px}
+.tag{display:inline-block;font-size:12px;color:var(--gold);border:1px solid rgba(255,196,107,.35);border-radius:20px;padding:1px 8px;margin-top:6px}
 .imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.imgs img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:#2a2236;display:block}
-.imgs a.fail{display:grid;place-items:center;aspect-ratio:16/9;border-radius:10px;background:#2a2236;color:var(--teal);font-size:13px;text-decoration:none}
-#status{font-size:13px;color:var(--teal)}
-.viewer{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;place-items:center;z-index:9}
-.viewer.on{display:grid}.viewer img{max-width:100%;max-height:100%}
+.imgs img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:rgba(255,255,255,.06);display:block}
+.viewer{position:fixed;inset:0;background:rgba(5,2,10,.94);display:none;place-items:center;z-index:20;padding:20px}
+.viewer.on{display:grid}.viewer img{max-width:100%;max-height:100%;border-radius:12px}
+/* tab bar */
+.tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10;display:grid;grid-template-columns:repeat(4,1fr);padding:8px;border-radius:24px}
+.tabs a{display:grid;justify-items:center;gap:2px;color:var(--mute);text-decoration:none;font-size:11px;padding:6px 0;border-radius:16px}
+.tabs a.on{color:var(--ink);background:rgba(255,46,136,.18)}.tabs a.on svg{stroke:var(--pink)}
+.tabs svg{width:22px;height:22px;fill:none;stroke:var(--mute);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#status{font-size:13px;color:var(--teal);min-height:18px}
+.btn{font:600 14px Inter,sans-serif;border:0;border-radius:14px;padding:10px 14px;background:var(--grad);color:#1a0710}
+@media (prefers-reduced-motion:no-preference){.sun{animation:pulse 6s ease-in-out infinite}@keyframes pulse{50%{filter:brightness(1.15)}}}
 </style>
 </head>
 <body>
-<header>
-<h1>Garages</h1>
-<div class="bar"><i id="prog"></i></div>
-<div class="row"><span id="count">0 / 0</span><button id="dl">Download images for offline</button></div>
-<div id="status"></div>
-<input type="search" id="q" placeholder="Search">
-</header>
-<main id="list"></main>
+<div id="app"></div>
 <div class="viewer" id="viewer"><img id="big" alt=""></div>
+<nav class="tabs glass" id="tabs">
+ <a href="#home" data-t="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+ <a href="#story" data-t="story"><svg viewBox="0 0 24 24"><path d="M4 5h11a3 3 0 0 1 3 3v12H7a3 3 0 0 1-3-3z"/><path d="M18 8h2v12"/></svg>Story</a>
+ <a href="#maps" data-t="maps"><svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Maps</a>
+ <a href="#settings" data-t="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</a>
+</nav>
 <script>
 {
-const KEY='gta6-done';
-let done={};try{done=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
-let items=[];
-const $=s=>document.querySelector(s);
+const KEY='gta6-done';let done={};try{done=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const full=u=>u.replace(/-\d+x\d+(\.\w+)$/,'$1');
-function save(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
-function render(){
-  const q=$('#q').value.trim().toLowerCase();
-  $('#list').innerHTML=items.filter(i=>!q||i.name.toLowerCase().includes(q)).map(i=>`
-  <div class="item ${done[i.id]?'done':''}" data-id="${esc(i.id)}">
-    <div class="top"><div class="check">${done[i.id]?'✓':''}</div>
-    <div><div class="name">${esc(i.name)}</div><div class="meta">${esc(i.info)} · ${esc(i.note)}</div></div></div>
-    <div class="imgs">${i.imgs.map(u=>`<img loading="lazy" src="${esc(u)}" data-full="${esc(full(u))}" alt="">`).join('')}</div>
-  </div>`).join('');
-  const n=items.filter(i=>done[i.id]).length;
-  $('#count').textContent=`${n} / ${items.length}`;
-  $('#prog').style.width=(items.length?n/items.length*100:0)+'%';
-  document.querySelectorAll('.imgs img').forEach(img=>img.onerror=()=>{
-    const a=document.createElement('a');a.className='fail';a.href=img.dataset.full;a.target='_blank';a.textContent='Open image';img.replaceWith(a);});
+const I={
+ car:'<path d="M5 16h14M3 16v-3l2-5h14l2 5v3h-2M5 16H3"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
+ gun:'<path d="M3 8h17v4h-6l-1 2h-3l-1 5H5l1-7H3z"/>',
+ paw:'<circle cx="7" cy="9" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="17" cy="9" r="2"/><path d="M8 17c0-3 2-5 4-5s4 2 4 5-2 3-4 3-4 0-4-3z"/>',
+ gem:'<path d="M6 4h12l3 5-9 11L3 9z"/><path d="M3 9h18M9 4l3 16 3-16"/>',
+ garage:'<path d="M3 21V9l9-5 9 5v12"/><path d="M7 21v-8h10v8M7 16h10"/>',
+ flag:'<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
+ bank:'<path d="M3 10l9-6 9 6M5 10v8M10 10v8M14 10v8M19 10v8M3 21h18"/>',
+ book:'<path d="M4 5h11a3 3 0 0 1 3 3v12H7a3 3 0 0 1-3-3z"/>',
+ bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 0 0-4-10z"/>',
+ star:'<path d="M12 3l2.7 5.6 6.3.9-4.5 4.4 1 6.1L12 17l-5.5 3 1-6.1L3 9.5l6.3-.9z"/>'};
+const ico=(n,c='i')=>`<svg class="${c}" viewBox="0 0 24 24">${I[n]}</svg>`;
+const CATS=[
+ {id:'garages',name:'Garages',icon:'garage',total:13,live:true},
+ {id:'vehicles',name:'Vehicles',icon:'car',total:557},
+ {id:'weapons',name:'Weapons',icon:'gun',total:196},
+ {id:'animals',name:'Animals',icon:'paw',total:255},
+ {id:'collectibles',name:'Collectibles',icon:'gem',total:1100},
+ {id:'activities',name:'Activities',icon:'flag',total:500},
+ {id:'robberies',name:'Robberies',icon:'bank',total:173},
+ {id:'challenges',name:'Challenges',icon:'star',total:80}];
+let items=[],route='home',filter='all';
+const app=document.getElementById('app');
+const doneIn=list=>list.filter(i=>done[i.id]).length;
+function hero(pct){
+ const C=2*Math.PI*40;
+ return `<div class="hero"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+ <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0b3d"/><stop offset=".45" stop-color="#9b1f6b"/><stop offset=".75" stop-color="#ff5a5f"/><stop offset="1" stop-color="#ffb36b"/></linearGradient>
+ <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe28a"/><stop offset="1" stop-color="#ff2e88"/></linearGradient>
+ <clipPath id="sc"><circle cx="270" cy="200" r="78"/></clipPath><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#0b0614" stop-opacity="0"/><stop offset="1" stop-color="#0b0614"/></linearGradient></defs>
+ <rect width="400" height="300" fill="url(#sky)"/>
+ <g class="sun" clip-path="url(#sc)"><rect x="180" y="110" width="180" height="180" fill="url(#sun)"/>${[0,1,2,3,4,5].map(k=>`<rect x="180" y="${200+k*13}" width="180" height="${3+k*1.2}" fill="#9b1f6b"/>`).join('')}</g>
+ <path d="M0 250 L20 250 20 215 34 215 34 230 52 230 52 190 66 190 66 230 90 230 90 205 104 205 104 238 140 238 140 222 160 222 160 250 400 250 400 300 0 300Z" fill="#1a0a24" opacity=".9"/>
+ <path d="M300 300 Q318 220 322 170" stroke="#12061c" stroke-width="5" fill="none"/><path d="M322 170 q-30 -6 -48 10 M322 170 q-16 -22 -40 -22 M322 170 q12 -26 36 -26 M322 170 q30 -2 44 18 M322 170 q-2 -26 8 -40" stroke="#12061c" stroke-width="6" fill="none" stroke-linecap="round"/>
+ <path d="M362 300 Q372 240 370 205" stroke="#12061c" stroke-width="4" fill="none"/><path d="M370 205 q-24 -4 -36 8 M370 205 q-10 -18 -28 -18 M370 205 q10 -20 28 -20 M370 205 q22 0 32 14" stroke="#12061c" stroke-width="5" fill="none" stroke-linecap="round"/>
+ <rect width="400" height="300" fill="url(#fade)"/></svg>
+ <div class="txt"><div><h1>LEONIDA<br>LOG</h1><p>Your road to 100%</p></div>
+ <div class="ring"><svg viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" stroke="rgba(255,255,255,.15)" stroke-width="8" fill="none"/>
+ <circle cx="48" cy="48" r="40" stroke="url(#rg)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}"/>
+ <defs><linearGradient id="rg"><stop offset="0" stop-color="#ff2e88"/><stop offset="1" stop-color="#ffc46b"/></linearGradient></defs></svg><b>${pct}%</b></div></div></div>`;
 }
-$('#list').addEventListener('click',e=>{
-  const img=e.target.closest('.imgs img');
-  if(img){$('#big').src=img.dataset.full;$('#viewer').classList.add('on');return}
-  if(e.target.closest('.imgs'))return;
-  const it=e.target.closest('.item');if(!it)return;
-  const id=it.dataset.id;done[id]=!done[id];if(!done[id])delete done[id];save();render();
+function home(){
+ const total=CATS.reduce((s,c)=>s+c.total,0)+91;
+ const pct=Math.round(doneIn(items)/total*1000)/10;
+ const g=items.length?doneIn(items):0;
+ app.innerHTML=hero(pct)+`<div class="wrap">
+ <div class="tip glass glow"><div class="ic">${ico('bulb')}</div><div><b>Next up</b><p>${g<items.length?`You own ${g} of ${items.length} garages. Mitchell Auto Center is the cheapest at $4,000.`:'All garages done. Nice work.'}</p></div></div>
+ <div class="sec"><h2>STORY</h2><span>5 chapters · 91 missions</span></div>
+ <a class="cat story glass" href="#story"><div class="ic">${ico('book')}</div><div><h3>Chapter 1</h3><small>Spoiler-safe · next mission only</small></div><span class="lock">Soon</span></a>
+ <div class="sec"><h2>PROGRESS DATABASE</h2><span>~3,000 items</span></div>
+ <div class="grid">${CATS.map(c=>{const n=c.live?doneIn(items):0;return `<a class="cat glass ${c.live?'live':''}" href="${c.live?'#'+c.id:'#home'}">
+ ${c.live?'':'<span class="lock">Soon</span>'}<div class="ic">${ico(c.icon)}</div><div><h3>${c.name}</h3><small>${n} / ${c.total}</small></div>
+ <div class="mini"><i style="width:${n/c.total*100}%"></i></div></a>`}).join('')}</div></div>`;
+}
+function list(){
+ const n=doneIn(items);
+ app.innerHTML=`<div class="top"><a class="back" href="#home">‹ Home</a><h1>GARAGES</h1>
+ <div class="bar"><i style="width:${n/items.length*100}%"></i></div>
+ <div class="row"><span>${n} of ${items.length} owned</span></div>
+ <div class="chips">${['all','todo','done'].map(f=>`<button class="chip ${filter===f?'on':''}" data-f="${f}">${f==='all'?'All':f==='todo'?'To do':'Done'}</button>`).join('')}</div>
+ <input type="search" id="q" placeholder="Search garages" autocomplete="off"></div><div class="list" id="list"></div>`;
+ const q=document.getElementById('q');q.oninput=()=>drawList(q.value);drawList('');
+}
+function drawList(qs){
+ qs=qs.trim().toLowerCase();
+ const rows=items.filter(i=>(!qs||i.name.toLowerCase().includes(qs))&&(filter==='all'||(filter==='done')===!!done[i.id]));
+ document.getElementById('list').innerHTML=rows.map(i=>`<div class="item glass ${done[i.id]?'done':''}" data-id="${esc(i.id)}">
+ <div class="ihead"><div class="check"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></div>
+ <div><div class="name">${esc(i.name)}</div><div class="meta">${esc(i.info)}</div><span class="tag">${esc(i.note)}</span></div></div>
+ <div class="imgs">${i.imgs.map(u=>`<img loading="lazy" src="${esc(u)}" data-full="${esc(full(u))}" alt="">`).join('')}</div></div>`).join('')||'<p class="meta">Nothing here.</p>';
+}
+function settings(){
+ app.innerHTML=`<div class="top"><h1>SETTINGS</h1></div><div class="wrap"><div class="tip glass"><div class="ic">${ico('gem')}</div><div style="flex:1"><b>Offline images</b><p>Save every image to this phone so the app works with no internet.</p><p style="margin-top:10px"><button class="btn" id="dl">Download all images</button></p><div id="status"></div></div></div></div>`;
+ document.getElementById('dl').onclick=async()=>{
+  const st=document.getElementById('status');if(!('caches' in window)){st.textContent='Not supported here';return}
+  const c=await caches.open('gta6-img');const urls=items.flatMap(i=>i.imgs.flatMap(u=>[u,full(u)]));let ok=0;
+  for(const u of urls){try{const r=await fetch(u,{mode:'no-cors'});await c.put(u,r);ok++}catch(e){}st.textContent=`Saved ${ok} / ${urls.length}`}};
+}
+function soon(t){app.innerHTML=`<div class="top"><a class="back" href="#home">‹ Home</a><h1>${t}</h1></div><div class="wrap"><div class="tip glass"><div class="ic">${ico('star')}</div><div><b>Coming next</b><p>This section is being built.</p></div></div></div>`}
+function go(){
+ route=(location.hash||'#home').slice(1);
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===route||(route==='garages'&&a.dataset.t==='home')));
+ if(route==='garages')list();else if(route==='settings')settings();else if(route==='story')soon('STORY');else if(route==='maps')soon('MAPS');else home();
+ window.scrollTo(0,0);
+}
+app.addEventListener('click',e=>{
+ const f=e.target.closest('[data-f]');if(f){filter=f.dataset.f;document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===f));drawList(document.getElementById('q').value);return}
+ const img=e.target.closest('.imgs img');if(img){document.getElementById('big').src=img.dataset.full;document.getElementById('viewer').classList.add('on');return}
+ const it=e.target.closest('.item');if(!it)return;
+ const id=it.dataset.id;if(done[id])delete done[id];else done[id]=1;save();
+ it.classList.toggle('done',!!done[id]);const n=doneIn(items);
+ document.querySelector('.bar i').style.width=n/items.length*100+'%';document.querySelector('.row span').textContent=`${n} of ${items.length} owned`;
 });
-$('#viewer').onclick=()=>$('#viewer').classList.remove('on');
-$('#q').oninput=render;
-$('#dl').onclick=async()=>{
-  if(!('caches' in window)){$('#status').textContent='Offline storage not supported';return}
-  const c=await caches.open('gta6-img');const urls=items.flatMap(i=>i.imgs.flatMap(u=>[u,full(u)]));
-  let ok=0;
-  for(const u of urls){try{const r=await fetch(u,{mode:'no-cors'});await c.put(u,r);ok++}catch(e){}
-    $('#status').textContent=`Saved ${ok} / ${urls.length} images`;}
-};
-fetch('data.json').then(r=>r.json()).then(d=>{items=d;render()});
+document.getElementById('viewer').onclick=e=>e.currentTarget.classList.remove('on');
+addEventListener('hashchange',go);
+fetch('data.json').then(r=>r.json()).then(d=>{items=d;go()}).catch(()=>go());
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
 }
 </script>
