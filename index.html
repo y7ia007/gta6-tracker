@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d0a14">
+<link rel="manifest" href="manifest.json">
+<title>GTA VI Tracker – Test</title>
+<style>
+:root{--bg:#0d0a14;--card:#1a1424;--ink:#f4eefc;--mute:#a99bbd;--pink:#ff4fa3;--teal:#2ee6c5}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,var(--bg) 80%,transparent);padding:16px 16px 12px}
+h1{margin:0 0 4px;font-size:24px}
+.bar{height:8px;border-radius:8px;background:#2a2236;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--teal));width:0;transition:width .3s}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;color:var(--mute);font-size:14px}
+input[type=search]{width:100%;font-size:16px;padding:12px 14px;border-radius:12px;border:0;background:var(--card);color:var(--ink);margin-top:10px}
+button{font:inherit;font-size:14px;border:0;border-radius:10px;padding:10px 12px;background:var(--card);color:var(--ink)}
+main{padding:0 16px 40px;display:grid;gap:12px}
+.item{background:var(--card);border-radius:16px;padding:14px;display:grid;gap:10px}
+.item.done{opacity:.55}
+.top{display:flex;gap:12px;align-items:flex-start}
+.check{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--mute);display:grid;place-items:center;font-size:18px;color:var(--bg)}
+.done .check{background:var(--teal);border-color:var(--teal)}
+.name{font-weight:700}
+.meta{color:var(--mute);font-size:14px}
+.imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.imgs img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:#2a2236;display:block}
+.imgs a.fail{display:grid;place-items:center;aspect-ratio:16/9;border-radius:10px;background:#2a2236;color:var(--teal);font-size:13px;text-decoration:none}
+#status{font-size:13px;color:var(--teal)}
+.viewer{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;place-items:center;z-index:9}
+.viewer.on{display:grid}.viewer img{max-width:100%;max-height:100%}
+</style>
+</head>
+<body>
+<header>
+<h1>Garages</h1>
+<div class="bar"><i id="prog"></i></div>
+<div class="row"><span id="count">0 / 0</span><button id="dl">Download images for offline</button></div>
+<div id="status"></div>
+<input type="search" id="q" placeholder="Search">
+</header>
+<main id="list"></main>
+<div class="viewer" id="viewer"><img id="big" alt=""></div>
+<script>
+{
+const KEY='gta6-done';
+let done={};try{done=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+let items=[];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const full=u=>u.replace(/-\d+x\d+(\.\w+)$/,'$1');
+function save(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+function render(){
+  const q=$('#q').value.trim().toLowerCase();
+  $('#list').innerHTML=items.filter(i=>!q||i.name.toLowerCase().includes(q)).map(i=>`
+  <div class="item ${done[i.id]?'done':''}" data-id="${esc(i.id)}">
+    <div class="top"><div class="check">${done[i.id]?'✓':''}</div>
+    <div><div class="name">${esc(i.name)}</div><div class="meta">${esc(i.info)} · ${esc(i.note)}</div></div></div>
+    <div class="imgs">${i.imgs.map(u=>`<img loading="lazy" src="${esc(u)}" data-full="${esc(full(u))}" alt="">`).join('')}</div>
+  </div>`).join('');
+  const n=items.filter(i=>done[i.id]).length;
+  $('#count').textContent=`${n} / ${items.length}`;
+  $('#prog').style.width=(items.length?n/items.length*100:0)+'%';
+  document.querySelectorAll('.imgs img').forEach(img=>img.onerror=()=>{
+    const a=document.createElement('a');a.className='fail';a.href=img.dataset.full;a.target='_blank';a.textContent='Open image';img.replaceWith(a);});
+}
+$('#list').addEventListener('click',e=>{
+  const img=e.target.closest('.imgs img');
+  if(img){$('#big').src=img.dataset.full;$('#viewer').classList.add('on');return}
+  if(e.target.closest('.imgs'))return;
+  const it=e.target.closest('.item');if(!it)return;
+  const id=it.dataset.id;done[id]=!done[id];if(!done[id])delete done[id];save();render();
+});
+$('#viewer').onclick=()=>$('#viewer').classList.remove('on');
+$('#q').oninput=render;
+$('#dl').onclick=async()=>{
+  if(!('caches' in window)){$('#status').textContent='Offline storage not supported';return}
+  const c=await caches.open('gta6-img');const urls=items.flatMap(i=>i.imgs.flatMap(u=>[u,full(u)]));
+  let ok=0;
+  for(const u of urls){try{const r=await fetch(u,{mode:'no-cors'});await c.put(u,r);ok++}catch(e){}
+    $('#status').textContent=`Saved ${ok} / ${urls.length} images`;}
+};
+fetch('data.json').then(r=>r.json()).then(d=>{items=d;render()});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
